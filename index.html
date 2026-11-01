@@ -637,7 +637,9 @@ function openSettings(){ $("#repo").value = cfg().repo; $("#token").value = cfg(
 $("#gear").onclick = openSettings; $("#gear2").onclick = openSettings;
 $("#settings").addEventListener("close", () => {
   const rv = $("#settings").returnValue;
-  if (rv === "save"){ store.set("repo", $("#repo").value.trim()); store.set("token", $("#token").value.trim()); S.prof = {}; S.runs = null; S.report = null; reload() }
+  if (rv === "save"){ store.set("repo", $("#repo").value.trim()); store.set("token", $("#token").value.trim());
+    try{ navigator.storage?.persist?.() }catch(e){}   // ask the browser to keep the saved code
+    S.prof = {}; S.runs = null; S.report = null; reload() }
   if (rv === "logout"){ store.del("token"); S.data = null; render() }
 });
 window.addEventListener("hashchange", () => { const v = location.hash.slice(1); if (VIEWS.some(x=>x[0]===v) && v !== S.view) go(v) });
