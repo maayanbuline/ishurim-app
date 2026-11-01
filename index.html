@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אישורים ס</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1F2F45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="אישורים ס">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<style>
+/* Layout: an approver's desk. Side rail on desktop, bottom bar on phone; one working column; each client keeps its own color. */
+:root{
+  --paper:#ECEFF2; --sheet:#FFFFFF; --ink:#1C2430; --muted:#5D6772; --line:#D3D9DF;
+  --ok:#2F6B45; --bad:#9C3324; --warn:#8A5A12; --brand:#1F2F45; --accent:#1F2F45; --accent-soft:#E2E7EE; --on-accent:#FFFFFF;
+  --ui:"IBM Plex Sans Hebrew",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --read:"Newsreader",Georgia,"Times New Roman",serif;
+  --rail:232px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#13181E; --sheet:#1C232B; --ink:#E6EAEE; --muted:#9AA5B0; --line:#2E3842;
+  --ok:#7DC293; --bad:#E58C7C; --warn:#E2B064; --accent-soft:#26303B; color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#13181E; --sheet:#1C232B; --ink:#E6EAEE; --muted:#9AA5B0; --line:#2E3842;
+  --ok:#7DC293; --bad:#E58C7C; --warn:#E2B064; --accent-soft:#26303B; color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+[hidden]{display:none!important}
+
+/* rail / bottom bar */
+.rail{position:fixed;z-index:8;background:var(--brand);color:#fff}
+.rail .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px}
+.rail .brand img{width:30px;height:30px;border-radius:8px}
+.nav{display:flex}
+.nav button{border:0;background:none;color:rgba(255,255,255,.72);cursor:pointer;display:flex;align-items:center;gap:10px;position:relative}
+.nav button svg{width:22px;height:22px;flex:none}
+.nav button[aria-current="page"]{color:#fff}
+.nav .badge{background:#fff;color:var(--brand);font-size:11px;font-weight:600;border-radius:999px;padding:0 6px;min-width:18px;text-align:center;line-height:18px}
+@media (min-width:900px){
+  .rail{top:0;bottom:0;right:0;width:var(--rail);padding:calc(20px + env(safe-area-inset-top,0px)) 14px 20px;display:flex;flex-direction:column;gap:26px}
+  .nav{flex-direction:column;gap:2px}
+  .nav button{padding:10px 12px;border-radius:10px;font-size:15px;width:100%;text-align:start}
+  .nav button[aria-current="page"]{background:rgba(255,255,255,.12)}
+  .nav .badge{margin-inline-start:auto}
+  .rail .foot{margin-top:auto;font-size:13px;color:rgba(255,255,255,.6)}
+  .rail .foot button{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;margin-top:8px}
+  .main{margin-inline-start:var(--rail)}
+}
+@media (max-width:899.98px){
+  .rail{inset:auto 0 0 0;padding:6px max(8px, env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px, env(safe-area-inset-right,0px));border-top:1px solid rgba(255,255,255,.08)}
+  .rail .brand,.rail .foot{display:none}
+  .nav{justify-content:space-around}
+  .nav button{flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;min-width:60px}
+  .nav .badge{position:absolute;top:0;inset-inline-start:calc(50% + 4px);font-size:10px;line-height:16px;min-width:16px;padding:0 4px}
+  .main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+.mtop{position:sticky;top:0;z-index:6;background:var(--brand);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between}
+.mtop b{font-size:17px;font-weight:600}
+@media (min-width:900px){.mtop{display:none}}
+.mtop button{background:none;border:0;color:rgba(255,255,255,.85);padding:6px;cursor:pointer}
+
+.wrap{max-width:820px;margin:0 auto;padding-block:20px 120px;padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px))}
+h1.page{font-size:24px;font-weight:600;margin:0 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+h3{font-size:14px;font-weight:600;margin:24px 0 10px;color:var(--muted);letter-spacing:.02em}
+
+/* client chips (folder tabs) */
+.clients{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin:0 0 14px;scrollbar-width:none}
+.clients::-webkit-scrollbar{display:none}
+.cchip{flex:0 0 auto;border:1px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;font-size:14px}
+.cchip i{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block}
+.cchip .n{font-size:12px;font-weight:600;color:var(--c)}
+.cchip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.cchip[aria-pressed="true"] i{background:#fff}.cchip[aria-pressed="true"] .n{color:#fff}
+
+/* today cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ccard{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0;border-top:5px solid var(--c)}
+.ccard h4{margin:0;font-size:17px;font-weight:600}
+.ccard .who{font-size:13px;color:var(--muted);margin-top:-6px}
+.nums{display:flex;gap:16px}
+.nums div{display:flex;flex-direction:column}
+.nums b{font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.nums span{font-size:12px;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12px;padding:1px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.on{border-color:var(--ok);color:var(--ok)}
+.pill.off{border-style:dashed}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.pill.bad{border-color:var(--bad);color:var(--bad)}
+.ccard .go{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap}
+
+.banner{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.banner b{display:block}
+.banner.warn{border-color:var(--warn)}
+
+/* items */
+.item{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;min-width:0}
+.item.marked-ok{border-color:var(--ok);box-shadow:inset -4px 0 0 var(--ok)}
+.item.marked-no{opacity:.55}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted)}
+.meta .k{color:var(--ink);font-weight:500}
+.meta .who{color:var(--c);font-weight:600}
+.flag{color:var(--bad);font-weight:500}
+.point{margin:10px 0 4px;font-size:15px}
+.draft{font-family:var(--read);font-size:19px;line-height:1.5;margin:8px 0;white-space:pre-wrap;direction:ltr;text-align:left;unicode-bidi:plaintext;overflow-wrap:anywhere}
+.ctx{margin:10px 0 0;padding:8px 12px;border-inline-start:3px solid var(--line);color:var(--muted);font-size:14px;direction:ltr;text-align:left}
+details{margin-top:10px;font-size:14px;color:var(--muted)}
+details summary{cursor:pointer}
+details p{white-space:pre-wrap;margin:6px 0}
+.links{font-size:13px;overflow-wrap:anywhere;margin-top:6px}
+.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--sheet);border-radius:9px;padding:8px 14px;cursor:pointer;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;gap:6px;line-height:1.3}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.no[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--accent)}
+.btn.wa{background:#1F7A4D;border-color:#1F7A4D;color:#fff}
+.btn.small{padding:5px 10px;font-size:14px}
+textarea,input[type=text],input[type=password],select{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--paper)}
+textarea{min-height:110px;resize:vertical}
+textarea.en{direction:ltr;font-family:var(--read);font-size:17px}
+.empty{color:var(--muted);padding:22px 4px}
+.amount{font-weight:600;color:var(--ink)}
+.week ul{margin:4px 0 0;padding-inline-start:20px}
+.seg{display:flex;gap:2px;margin:6px 0 16px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{border:0;background:none;padding:9px 12px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap}
+.seg button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:500}
+
+/* profile */
+.prof{background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.prof .hd{background:var(--accent);color:#fff;padding:16px 18px}
+.prof .hd h2{margin:0;font-size:22px;font-weight:500}
+.prof .hd p{margin:2px 0 0;opacity:.85;font-size:14px}
+.prof .hd .pills{margin-top:10px}
+.prof .hd .pill{border-color:rgba(255,255,255,.4);color:#fff}
+.prof dl{margin:0}
+.prof dl>div{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:12px 18px;border-top:1px solid var(--line)}
+.prof dt{font-size:13px;color:var(--muted);font-weight:500}
+.prof dd{margin:0;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.prof dd.en{direction:ltr;text-align:left}
+@media (max-width:560px){.prof dl>div{grid-template-columns:1fr;gap:2px}}
+.field{display:grid;gap:6px;margin-bottom:14px;font-size:14px;font-weight:500}
+.field small{font-weight:400;color:var(--muted)}
+.switch{display:flex;gap:10px;align-items:center;cursor:pointer;font-size:15px}
+.switch input{width:20px;height:20px;accent-color:var(--accent)}
+
+/* runs */
+.run{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.run:first-child{border-top:0}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.dot.success{background:var(--ok)}.dot.failure{background:var(--bad)}.dot.in_progress,.dot.queued{background:var(--warn)}
+.run small{color:var(--muted);display:block;font-size:12px}
+.box{background:var(--sheet);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.act{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.act b{font-size:15px}
+.act p{margin:0;font-size:13px;color:var(--muted)}
+.act .row{display:flex;gap:6px;margin-top:auto}
+.confirm{border:1px solid var(--warn);background:var(--sheet);border-radius:10px;padding:10px 12px;font-size:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.md{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:6px 18px 14px;overflow-x:auto}
+.md h1{font-size:19px;margin:12px 0 6px}.md h2{font-size:16px;margin:16px 0 6px}
+.md table{border-collapse:collapse;font-size:14px;min-width:480px}
+.md td,.md th{border:1px solid var(--line);padding:5px 8px;text-align:start}
+.md ul,.md ol{padding-inline-start:20px}
+
+.send{position:fixed;inset-inline:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--sheet);border-top:1px solid var(--line);z-index:9}
+@media (min-width:900px){.send{inset-inline-start:var(--rail)}}
+@media (max-width:899.98px){.send{bottom:calc(62px + env(safe-area-inset-bottom,0px));padding-bottom:12px}}
+.send div{max-width:820px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.toast{position:fixed;bottom:calc(150px + env(safe-area-inset-bottom,0px));inset-inline:16px;max-width:560px;margin:0 auto;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:10px;z-index:20}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--sheet);color:var(--ink);max-width:460px;width:calc(100% - 32px);padding:20px}
+dialog::backdrop{background:rgba(10,15,20,.45)}
+dialog p{font-size:14px;color:var(--muted)}
+dialog input{direction:ltr}
+.steps{font-size:14px;color:var(--muted);padding-inline-start:18px;margin:6px 0}
+.steps li{margin:3px 0}
+</style>
+</head>
+<body>
+<nav class="rail" aria-label="ניווט ראשי">
+  <div class="brand"><img src="icons/icon-192.png" alt="">אישורים ס</div>
+  <div class="nav" id="nav"></div>
+  <div class="foot"><div id="footInfo"></div><button id="gear2">הגדרות</button></div>
+</nav>
+<div class="main">
+  <div class="mtop"><b id="mtitle">אישורים ס</b><button id="gear" aria-label="הגדרות">הגדרות</button></div>
+  <main class="wrap" id="main"><p class="empty">טוען…</p></main>
+</div>
+<div class="send" id="send" hidden><div><span id="sendText"></span><button class="btn primary" id="sendBtn">שליחה</button></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h2 style="margin:0 0 4px;font-size:20px;font-weight:600">הגדרות</h2>
+    <p>קוד גישה של GitHub (Fine-grained token) למאגר של אישורים ס בלבד. נשמר רק במכשיר הזה.</p>
+    <ol class="steps">
+      <li>GitHub ← Settings ← Developer settings ← Fine-grained tokens ← Generate new token</li>
+      <li>Repository access: Only select repositories ← המאגר של אישורים ס</li>
+      <li>Permissions: Contents – Read and write · Issues – Read and write · Actions – Read and write</li>
+    </ol>
+    <div class="field">מאגר<input id="repo" type="text" placeholder="maayanbuline/ishurim-s" autocomplete="off"></div>
+    <div class="field">קוד גישה<input id="token" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+    <div class="actions"><button class="btn primary" value="save">שמירה</button><button class="btn" value="cancel">ביטול</button>
+      <button class="btn ghost" value="logout" style="margin-inline-start:auto">מחיקת הקוד מהמכשיר</button></div>
+  </form>
+</dialog>
+
+<script>
+const COLORS = {john_smith:"#24364F", emily_johnson:"#1F6B6B", michael_williams:"#6E2430", sarah_brown:"#3D4248", david_jones:"#2C5A43"};
+const ICON = {
+  today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>',
+  approve:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8.5 12 2.5 2.5L16 9.5"/></svg>',
+  manual:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>',
+  clients:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3 3-4.6 5.5-4.6s4.7 1.6 5.5 4.6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.6c2.2.1 3.8 1.5 4.5 4.4"/></svg>',
+  runs:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>'
+};
+const VIEWS = [["today","היום"],["approve","לאישור"],["manual","לפרסום ידני"],["clients","לקוחות"],["runs","הפעלות ודוחות"]];
+const PLAT = {x:"X", linkedin:"LinkedIn", news:"כתבה", regulator:"רגולטור", court:"בית משפט"};
+const CAT = {firm:"משרד", professional:"איש מקצוע", journalist:"עיתונאי", body:"גוף מקצועי"};
+const TYPE = {deal_value:"שווי עסקה", amount_claimed:"סכום תביעה", alleged_damages:"נזק נטען", settlement:"פשרה", judgment:"פסק דין", valuation:"הערכת שווי", fine:"קנס", other:"סכום"};
+const MODES = {daily:"מחזור יומי", publish:"פרסום", evening:"דוח ערב", issue:"עדכון משימה", plan90:"תוכנית 90 יום", connect:"חיבור חשבון"};
+const store = {get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}, del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const S = {view: location.hash.slice(1) || "today", client: store.get("client",""), csec:"profile", data:null, prof:{}, runs:null, report:null, editing:false, confirm:null};
+if (!VIEWS.some(v => v[0] === S.view)) S.view = "today";
+const marks = {}, edits = {};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const col = id => COLORS[id] || "#1F2F45";
+function toast(t){const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,3600)}
+function cfg(){return {repo:store.get("repo",""), token:store.get("token","")}}
+const b64 = s => btoa(String.fromCharCode(...new TextEncoder().encode(s)));
+const unb64 = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,"")), c => c.charCodeAt(0)));
+
+async function gh(path, opts={}){
+  const {repo, token} = cfg();
+  const r = await fetch(`https://api.github.com/repos/${repo}${path}`, {method:opts.method||"GET", body:opts.body, cache:"no-store", headers:{
+    Authorization:`Bearer ${token}`, Accept: opts.raw ? "application/vnd.github.raw" : "application/vnd.github+json",
+    "X-GitHub-Api-Version":"2022-11-28", ...(opts.body ? {"Content-Type":"application/json"} : {})}});
+  if (r.status === 204) return null;
+  if (!r.ok){
+    const m = {401:"קוד הגישה לא תקין או שפג תוקפו", 403:"לקוד הגישה אין הרשאה לפעולה הזו – בדקי את ההרשאות בהגדרות", 404:"המאגר או הקובץ לא נמצאו", 409:"הקובץ השתנה בינתיים – רענני ונסי שוב", 422:"GitHub דחה את הבקשה"}[r.status];
+    throw new Error(m || `GitHub ${r.status}`);
+  }
+  return opts.raw ? r.text() : r.json();
+}
+
+/* ---------- data ---------- */
+async function loadDashboard(){
+  S.data = JSON.parse(await gh("/contents/outbox/dashboard/today.json", {raw:true}));
+  if (!S.data.clients.some(c => c.id === S.client)) S.client = S.data.clients[0]?.id || "";
+}
+async function loadProfile(id, force){
+  if (S.prof[id] && !force) return S.prof[id];
+  const f = await gh(`/contents/config/clients/${id}.yaml`);
+  const raw = unb64(f.content);
+  return (S.prof[id] = {sha:f.sha, raw, obj: jsyaml.load(raw)});
+}
+async function loadRuns(){
+  const r = await gh("/actions/runs?per_page=12");
+  S.runs = r.workflow_runs || [];
+}
+async function loadReport(){
+  const list = await gh("/contents/outbox/reports");
+  const files = (list||[]).filter(f => f.name.endsWith(".md")).sort((a,b)=>b.name.localeCompare(a.name));
+  if (!files.length){ S.report = {name:"", text:""}; return }
+  S.report = {name: files[0].name.replace(".md",""), text: await gh(`/contents/outbox/reports/${files[0].name}`, {raw:true})};
+}
+async function openIssue(){
+  const issues = await gh("/issues?state=open&per_page=50");
+  return issues.find(i => i.title.startsWith("Approvals S") && !i.pull_request);
+}
+
+const clients = () => S.data?.clients || [];
+const cur = () => clients().find(c => c.id === S.client);
+const pending = c => [...c.posts, ...c.replies].filter(i => i.status === "pending_approval");
+const manual = c => [...c.posts.filter(i => i.status === "approved" && !c.connected[i.platform]), ...c.replies.filter(i => i.status === "approved")];
+const posted = id => store.get("m:"+id,"") === "1";
+const totalPending = () => clients().reduce((n,c)=>n+pending(c).length,0);
+const totalManual = () => clients().reduce((n,c)=>n+manual(c).filter(i=>!posted(i.id)).length,0);
+
+/* ---------- shell ---------- */
+function renderNav(){
+  const badge = {approve: totalPending(), manual: totalManual()};
+  $("#nav").innerHTML = VIEWS.map(([k,l]) => `<button data-view="${k}" aria-current="${S.view===k?"page":"false"}">${ICON[k]}<span>${l}</span>${badge[k]?`<span class="badge">${badge[k]}</span>`:""}</button>`).join("");
+  $("#mtitle").textContent = VIEWS.find(v=>v[0]===S.view)[1];
+  $("#footInfo").textContent = S.data ? `עודכן ${new Date(S.data.generated).toLocaleString("he-IL",{dateStyle:"short",timeStyle:"short"})}` : "";
+}
+function render(){
+  renderNav();
+  if (!cfg().repo || !cfg().token){ $("#main").innerHTML = vWelcome(); return }
+  if (!S.data){ $("#main").innerHTML = `<p class="empty">טוען…</p>`; return }
+  document.documentElement.style.setProperty("--accent", S.view==="today"||S.view==="runs"||S.view==="manual" ? "#1F2F45" : col(S.client));
+  $("#main").innerHTML = ({today:vToday, approve:vApprove, manual:vManual, clients:vClients, runs:vRuns})[S.view]();
+  updateSend();
+}
+function go(view){ S.view = view; S.editing = false; S.confirm = null; history.replaceState(null,"","#"+view); render(); window.scrollTo({top:0});
+  if (view==="runs") refreshRuns(); if (view==="clients") ensureProfile(); }
+
+function vWelcome(){
+  return `<h1 class="page">ברוכה הבאה</h1><p class="sub">כדי להתחיל, מחברים את האפליקציה למאגר של המערכת פעם אחת.</p>
+  <div class="banner"><div><b>מה צריך</b>קוד גישה של GitHub למאגר של אישורים ס בלבד, עם הרשאות Contents, Issues ו-Actions (קריאה וכתיבה). ההוראות המלאות בחלון ההגדרות.</div></div>
+  <button class="btn primary" data-act="settings">פתיחת ההגדרות</button>${installHint()}`;
+}
+function installHint(){
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (standalone || store.get("hideInstall","")) return "";
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return `<div class="banner" style="margin-top:16px"><div style="flex:1"><b>להתקנה כאפליקציה</b>${ios ? "בספארי: כפתור השיתוף ← הוספה למסך הבית." : "בכרום או באדג׳: סמל ההתקנה בשורת הכתובת ← התקנה."}</div><button class="btn small ghost" data-act="hideInstall">הבנתי</button></div>`;
+}
+function clientChips(withCounts){
+  return `<div class="clients" role="group" aria-label="בחירת לקוח">${clients().map(c => {
+    const n = withCounts==="pending" ? pending(c).length : 0;
+    return `<button class="cchip" style="--c:${col(c.id)}" data-client="${c.id}" aria-pressed="${c.id===S.client}"><i></i>${esc(c.name)}${n?`<span class="n">${n}</span>`:""}</button>`}).join("")}</div>`;
+}
+
+/* ---------- today ---------- */
+function vToday(){
+  const d = new Date();
+  const hello = d.getHours() < 12 ? "בוקר טוב" : d.getHours() < 18 ? "צהריים טובים" : "ערב טוב";
+  const tp = totalPending(), tm = totalManual();
+  let h = `<h1 class="page">${hello}</h1><p class="sub">${d.toLocaleDateString("he-IL",{weekday:"long",day:"numeric",month:"long"})} · ${tp ? `${tp} טיוטות מחכות לאישור` : "אין טיוטות שמחכות"}${tm ? ` · ${tm} לפרסום ידני` : ""}</p>`;
+  if (S.data && S.data.date !== new Date().toISOString().slice(0,10))
+    h += `<div class="banner warn"><div><b>הנתונים מ-${esc(S.data.date)}</b>המחזור של היום עוד לא רץ, או שעדיין לא הסתיים. אפשר להריץ אותו מ"הפעלות ודוחות".</div></div>`;
+  h += installHint();
+  h += `<div class="grid">${clients().map(c => {
+    const p = pending(c).length, m = manual(c).filter(i=>!posted(i.id)).length;
+    const st = c.paused ? `<span class="pill warn">מושהה</span>` : c.voice_approved ? `<span class="pill on">פעיל</span>` : `<span class="pill off">ממתין לאישור קול</span>`;
+    const conn = c.platforms.map(pl => `<span class="pill ${c.connected[pl]?"on":"off"}">${PLAT[pl]||pl}${c.connected[pl]?"":" · ידני"}</span>`).join("");
+    return `<article class="ccard" style="--c:${col(c.id)}"><h4>${esc(c.name)}</h4><div class="who">${esc(c.profession)} · ${esc(c.city)}</div>
+      <div class="nums"><div><b>${p}</b><span>לאישור</span></div><div><b>${m}</b><span>לפרסום ידני</span></div><div><b>${c.opportunities.length}</b><span>הזדמנויות</span></div></div>
+      <div class="pills">${st}${conn}</div>
+      <div class="go"><button class="btn small ${p?"primary":""}" data-open="approve" data-c="${c.id}" ${p?"":"disabled"} style="${p?`background:${col(c.id)};border-color:${col(c.id)}`:""}">לאישור</button>
+        <button class="btn small" data-open="clients" data-c="${c.id}">פרופיל</button></div></article>`}).join("")}</div>`;
+  return h;
+}
+
+/* ---------- approve ---------- */
+function srcLinks(i){ return i.sources?.length ? `<div class="links">מקורות: ${i.sources.slice(0,4).map(s => { let h=s; try{h=new URL(s).hostname}catch(e){} return `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(h)}</a>`}).join(" · ")}</div>` : "" }
+function vApprove(){
+  const c = cur(); if (!c) return `<p class="empty">אין לקוחות בקובץ הנתונים.</p>`;
+  const its = pending(c);
+  let h = `<h1 class="page">לאישור</h1><p class="sub">מסמנים אישור או דחייה, עורכים אם צריך, ולוחצים "שליחה" למטה.</p>${clientChips("pending")}`;
+  if (!its.length) return h + `<p class="empty">אין טיוטות שממתינות ל${esc(c.name.split(" ")[0])}. הסבב הבא מגיע בבוקר.</p>`;
+  h += `<div class="actions" style="margin:0 0 12px"><button class="btn small" data-act="allOk">סימון הכול לאישור</button><button class="btn small ghost" data-act="clearMarks">ניקוי הסימונים</button></div>`;
+  return h + its.map(i => {
+    const m = marks[i.id] || "";
+    const auto = i.kind==="post" && c.connected[i.platform];
+    return `<article class="item ${m==="ok"?"marked-ok":m==="no"?"marked-no":""}">
+      <div class="meta"><span class="k">${i.kind==="post"?"פוסט":"תגובה"} ב-${PLAT[i.platform]||i.platform}</span>
+        <span>${i.kind==="reply" ? "פרסום ידני" : auto ? "עולה לבד בשעה של הלקוח" : "פרסום ידני (לא מחובר)"}</span>
+        ${i.topic?`<span>${esc(i.topic)}</span>`:""}${i.legal_review?`<span class="flag">לבדיקה משפטית</span>`:""}${edits[i.id]?`<span class="flag">נערך</span>`:""}</div>
+      ${i.point?`<p class="point">${esc(i.point)}</p>`:""}
+      ${i.target_summary?`<div class="ctx">${esc(i.target_summary)}</div>`:""}
+      <p class="draft">${esc(edits[i.id] ?? i.text)}</p>
+      ${i.translation?`<details><summary>תרגום לעברית</summary><p>${esc(i.translation)}</p></details>`:""}
+      ${i.notes?.length?`<details><summary>הערות בקרה</summary><p>${esc(i.notes.join("\n"))}</p></details>`:""}
+      ${i.target_url?`<div class="links"><a href="${esc(i.target_url)}" target="_blank" rel="noopener">הפוסט המקורי</a></div>`:""}${srcLinks(i)}
+      <div class="actions">
+        <button class="btn ok" data-ok="${i.id}" aria-pressed="${m==="ok"}">אישור</button>
+        <button class="btn" data-edit="${i.id}">עריכה</button>
+        <button class="btn no" data-no="${i.id}" aria-pressed="${m==="no"}">דחייה</button></div>
+    </article>`}).join("");
+}
+
+/* ---------- manual ---------- */
+function vManual(){
+  const groups = clients().map(c => [c, manual(c)]).filter(([,its]) => its.length);
+  let h = `<h1 class="page">לפרסום ידני</h1><p class="sub">פוסטים ברשת שלא חוברה ותגובות לפוסטים של אחרים. שולחים ללקוח, והוא מדביק ומפרסם בעצמו בחשבון שלו.</p>`;
+  if (!groups.length) return h + `<p class="empty">אין כרגע פריטים מאושרים שמחכים לפרסום ידני. הם מופיעים כאן מיד אחרי האישור.</p>`;
+  return h + groups.map(([c, its]) => `<h3 style="color:${col(c.id)}">${esc(c.name)}</h3>` + its.map(i => {
+    const isPost = i.kind === "post", done = posted(i.id);
+    const when = isPost && i.publish_after ? `<span>מומלץ: ${esc(new Date(i.publish_after).toLocaleString("he-IL",{timeZone:c.timezone,weekday:"short",hour:"2-digit",minute:"2-digit"}))} (שעון הלקוח)</span>` : "";
+    const open = isPost ? (i.platform === "linkedin" ? `<a class="btn" href="https://www.linkedin.com/feed/" target="_blank" rel="noopener">פתיחת לינקדאין</a>` : "")
+      : `<a class="btn" href="${esc(i.target_url)}" target="_blank" rel="noopener">פתיחת הפוסט</a>`;
+    const wa = `https://wa.me/?text=${encodeURIComponent((isPost ? "" : `תגובה לפוסט: ${i.target_url}\n\n`) + i.text)}`;
+    return `<article class="item ${done?"marked-ok":""}" style="--c:${col(c.id)}"><div class="meta"><span class="k">${isPost?"פוסט":"תגובה"} ב-${PLAT[i.platform]||i.platform}</span>${when}</div>
+      <p class="draft">${esc(i.text)}</p>
+      <div class="actions"><button class="btn primary" data-copy="${i.id}" data-c="${c.id}">העתקה</button>
+        <a class="btn wa" href="${esc(wa)}" target="_blank" rel="noopener">שליחה בוואטסאפ</a>${open}
+        <button class="btn ok" data-posted="${i.id}" aria-pressed="${done}">${done?"פורסם ✓":"סימון שפורסם"}</button></div></article>`}).join("")).join("");
+}
+
+/* ---------- clients ---------- */
+const CSEC = [["profile","פרופיל"],["opps","הזדמנויות"],["follows","למעקב"],["ideas","רעיונות"],["plan","90 יום"]];
+async function ensureProfile(force){
+  if (!S.client || (S.prof[S.client] && !force)) return;
+  try{ await loadProfile(S.client, force); if (S.view==="clients") render() }catch(e){ toast(e.message) }
+}
+function vClients(){
+  const c = cur(); if (!c) return `<p class="empty">אין לקוחות.</p>`;
+  let h = `<h1 class="page">לקוחות</h1><p class="sub">הפרופיל של כל לקוח, מה שהמערכת מצאה בשבילו, והתוכנית שלו.</p>${clientChips()}
+    <nav class="seg">${CSEC.map(([k,l]) => `<button data-csec="${k}" aria-pressed="${k===S.csec}">${l}</button>`).join("")}</nav>`;
+  return h + ({profile:vProfile, opps:vOpps, follows:vFollows, ideas:vIdeas, plan:vPlan})[S.csec](c);
+}
+const lines = a => (a||[]).join("\n");
+function vProfile(c){
+  const P = S.prof[c.id];
+  if (!P) return `<p class="empty">טוען את הפרופיל…</p>`;
+  const o = P.obj, st = o.status || {};
+  const pills = [
+    st.paused ? `<span class="pill">מושהה</span>` : st.voice_approved_by_client ? `<span class="pill">קול מאושר${st.approved_on?` · ${esc(st.approved_on)}`:""}</span>` : `<span class="pill">ממתין לאישור קול</span>`,
+    ...(o.platforms||[]).map(p => `<span class="pill">${PLAT[p]||p} ${(st.accounts_connected||{})[p] ? "מחובר" : "ידני"}</span>`)].join("");
+  const head = `<div class="hd"><h2>${esc(o.name)}</h2><p>${esc(o.profession)} · ${esc(o.city)}, ${esc(o.state)} · ${esc(o.region?.label||"")}</p><div class="pills">${pills}</div></div>`;
+  if (!S.editing){
+    const row = (k, v, en) => v ? `<div><dt>${k}</dt><dd class="${en?"en":""}">${esc(v)}</dd></div>` : "";
+    return `<div class="prof">${head}<dl>
+      ${row("נושאים", lines(o.topics), true)}${row("מילות מפתח", (o.keywords||[]).join(", "), true)}
+      ${row("סגנון", o.style, true)}${row("פרטים אישיים מאושרים", lines(o.personal) || "אין", true)}
+      ${row("כללים לפרטים אישיים", o.personal_rules, true)}${row("לא נוגעים", lines(o.off_limits), true)}
+      ${row("עוד לא ידוע", lines(o.open_fields), true)}${row("מקורות אזוריים", (o.region?.outlets||[]).join(", "), true)}
+    </dl></div>
+    <div class="actions"><button class="btn primary" data-act="editProfile">עריכת הפרופיל</button>
+      <button class="btn" data-act="togglePause">${st.paused ? "חידוש הפעילות" : "השהיית הלקוח"}</button>
+      <button class="btn ghost" data-act="reloadProfile">רענון</button></div>
+    ${S.confirm==="pause" ? `<div class="confirm" style="margin-top:10px">${st.paused ? "לחדש את הטיוטות ל" : "להשהות את הטיוטות ל"}${esc(o.first_name||o.name)}? ${st.paused?"":"שום דבר חדש לא ייכתב בשמו עד שתחדשי."}
+      <button class="btn small primary" data-act="doPause">כן</button><button class="btn small" data-act="cancelConfirm">ביטול</button></div>` : ""}`;
+  }
+  const f = (id, label, val, hint, en=true, tall) => `<label class="field" for="${id}">${label}${hint?`<small>${hint}</small>`:""}<textarea id="${id}" class="${en?"en":""}" style="${tall?"min-height:170px":""}">${esc(val)}</textarea></label>`;
+  return `<div class="prof">${head}<div style="padding:16px 18px">
+    <label class="field" for="e_prof">מקצוע<input id="e_prof" type="text" style="direction:ltr" value="${esc(o.profession)}"></label>
+    ${f("e_topics","נושאים",lines(o.topics),"נושא אחד בכל שורה")}
+    ${f("e_kw","מילות מפתח",(o.keywords||[]).join(", "),"מופרדות בפסיקים")}
+    ${f("e_style","סגנון",o.style,"איך הלקוח כותב, ביטויים, מה מפריע לו",true,true)}
+    ${f("e_personal","פרטים אישיים מאושרים",lines(o.personal),"פרט אחד בכל שורה. רק פרטים שהלקוח עצמו אישר לפרסום.")}
+    ${f("e_prules","כללים לפרטים אישיים",o.personal_rules,"")}
+    ${f("e_off","לא נוגעים",lines(o.off_limits),"נושא אחד בכל שורה")}
+    <div class="actions"><button class="btn primary" data-act="saveProfile">שמירה</button><button class="btn" data-act="cancelEdit">ביטול</button></div>
+  </div></div>`;
+}
+function money(o){
+  const d = o.data || {}; if (!d.amount_usd) return "";
+  const v = d.amount_usd >= 1e9 ? `$${(d.amount_usd/1e9).toFixed(1)} מיליארד` : `$${Math.round(d.amount_usd/1e6)} מיליון`;
+  return `<span class="amount">${v}</span> <span>${TYPE[d.amount_type]||"סכום"}</span>`;
+}
+function vOpps(c){
+  if (!c.opportunities.length) return `<p class="empty">עוד לא נמצאו הזדמנויות. המחקר רץ כל בוקר.</p>`;
+  return c.opportunities.slice().sort((a,b)=>(b.data?.relevance||0)-(a.data?.relevance||0)).map(o => `<article class="item">
+    <div class="meta"><span class="k">${esc(o.data?.outlet || PLAT[o.platform] || o.platform)}</span>${o.data?.published?`<span>${esc(o.data.published)}</span>`:""}<span>רלוונטיות ${o.data?.relevance ?? "–"}</span>${money(o)}</div>
+    <p class="point" style="font-weight:500;direction:ltr;text-align:left">${esc(o.title)}</p><div class="ctx">${esc(o.text)}</div>
+    ${o.point?`<p class="point">למה זה מתאים: ${esc(o.point)}</p>`:""}${o.data?.angle?`<p class="point">מה אפשר להוסיף: ${esc(o.data.angle)}</p>`:""}
+    <div class="links"><a href="${esc(o.target_url)}" target="_blank" rel="noopener">למקור</a></div></article>`).join("");
+}
+function vFollows(c){
+  if (!c.follows.length) return `<p class="empty">אין הצעות מעקב חדשות היום.</p>`;
+  return c.follows.map(f => { const done = store.get("f:"+f.id,"") === "1"; return `<article class="item ${done?"marked-ok":""}">
+    <div class="meta"><span class="k">${esc(f.title)}</span><span>${PLAT[f.platform]||f.platform}</span>${f.data?.category?`<span>${CAT[f.data.category]||""}</span>`:""}${f.data?.followers?`<span>${esc(f.data.followers)} עוקבים</span>`:""}</div>
+    ${f.point?`<p class="point">${esc(f.point)}</p>`:""}${f.text?`<p class="point" style="color:var(--muted)">איך להגיב שם: ${esc(f.text)}</p>`:""}
+    <div class="actions"><a class="btn" href="${esc(f.target_url)}" target="_blank" rel="noopener">פתיחת הפרופיל</a>
+    <button class="btn ok" data-follow="${f.id}" aria-pressed="${done}">${done?"עוקבים ✓":"סימון שעוקבים"}</button></div></article>`}).join("");
+}
+function vIdeas(c){
+  const a = c.article_ideas.map(i => `<article class="item"><div class="meta"><span class="k">רעיון למאמר</span></div>
+    <p class="point" style="font-weight:500;direction:ltr;text-align:left">${esc(i.title)}</p>${i.text?`<p class="point">${esc(i.text)}</p>`:""}
+    ${i.point?`<p class="point" style="color:var(--muted)">למה עכשיו: ${esc(i.point)}</p>`:""}${srcLinks(i)}</article>`).join("");
+  const v = c.visuals.map(i => `<article class="item"><div class="meta"><span class="k">רעיון חזותי</span></div>
+    ${i.title?`<p class="point">${esc(i.title)}</p>`:""}<p class="draft" style="font-size:16px">${esc(i.text)}</p>
+    <div class="actions"><button class="btn" data-copy="${i.id}" data-c="${c.id}">העתקת הפרומפט</button></div></article>`).join("");
+  return (a || v) ? `<h3>מאמרים</h3>${a || `<p class="empty">אין רעיונות כרגע.</p>`}<h3>חזותי</h3>${v || `<p class="empty">אין רעיונות כרגע.</p>`}` : `<p class="empty">אין רעיונות כרגע. הם נוצרים במחזור הבוקר.</p>`;
+}
+function vPlan(c){
+  const p = c.plan90;
+  if (!p?.phases?.length) return `<p class="empty">עוד אין תוכנית 90 יום. אפשר ליצור אותה מ"הפעלות ודוחות".</p>`;
+  return `<p class="sub">התחלה: ${esc(p.start||"")}. סימון ביצוע נעשה במשימה "תוכנית 90 יום" ב-GitHub.</p>` +
+    p.phases.map(ph => `<h3>${esc(ph.name)} · ימים ${esc(ph.days)}</h3>${ph.goal?`<p class="point">${esc(ph.goal)}</p>`:""}
+    ${(ph.weeks||[]).map(w => `<div class="item week"><div class="meta"><span class="k">שבוע ${esc(w.week)}</span></div><ul>${(w.tasks||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`).join("")}`).join("");
+}
+
+/* ---------- runs & reports ---------- */
+const ACTS = [
+  ["daily","מחזור יומי עכשיו","מחקר וטיוטות חדשות לכל הלקוחות הפעילים. רץ לבד כל בוקר.",false],
+  ["publish","פרסום עכשיו","מפרסם ב-X פוסטים מאושרים שהגיעה שעתם. רץ לבד כל חצי שעה.",false],
+  ["evening","דוח ערב","מדידה, למידה ודוח יומי. רץ לבד בלילה.",false],
+  ["plan90","תוכנית 90 יום","יוצר או מחדש את התוכנית של לקוח אחד.",true]];
+async function refreshRuns(){ try{ await Promise.all([loadRuns(), S.report ? null : loadReport()]); if (S.view==="runs") render() }catch(e){ toast(e.message) } }
+function vRuns(){
+  let h = `<h1 class="page">הפעלות ודוחות</h1><p class="sub">הכול רץ לבד לפי לוח הזמנים. כאן אפשר להפעיל ידנית ולראות מה קרה.</p>`;
+  h += `<div class="acts">${ACTS.map(([m,t,d,needClient]) => `<div class="act"><b>${t}</b><p>${d}</p>
+    ${needClient ? `<select id="pc_${m}" aria-label="לקוח">${clients().map(c=>`<option value="${c.id}" ${c.id===S.client?"selected":""}>${esc(c.name)}</option>`).join("")}</select>` : ""}
+    ${S.confirm===m ? `<div class="confirm">להריץ עכשיו? <button class="btn small primary" data-run="${m}">הרצה</button><button class="btn small" data-act="cancelConfirm">ביטול</button></div>`
+      : `<div class="row"><button class="btn small" data-ask="${m}">הפעלה</button></div>`}</div>`).join("")}</div>`;
+  h += `<h3>הרצות אחרונות <button class="btn small ghost" data-act="refreshRuns">רענון</button></h3>`;
+  if (!S.runs) h += `<p class="empty">טוען…</p>`;
+  else if (!S.runs.length) h += `<p class="empty">אין הרצות עדיין.</p>`;
+  else h += `<div class="box">${S.runs.map(r => {
+    const st = r.status === "completed" ? (r.conclusion || "") : r.status;
+    const he = {success:"הצליח", failure:"נכשל", cancelled:"בוטל", in_progress:"רץ עכשיו", queued:"בתור", skipped:"דולג"}[st] || st;
+    const what = {schedule:"לפי לוח זמנים", workflow_dispatch:"הפעלה ידנית", issues:"אישור במשימה", issue_comment:"תגובה במשימה"}[r.event] || r.event;
+    return `<div class="run"><span class="dot ${esc(st)}"></span><div><b style="font-weight:500">${esc(what)}</b><small>${new Date(r.created_at).toLocaleString("he-IL",{dateStyle:"short",timeStyle:"short"})}</small></div>
+      <a class="btn small ghost" href="${esc(r.html_url)}" target="_blank" rel="noopener">${esc(he)}</a></div>`}).join("")}</div>`;
+  h += `<h3>דוח ערב אחרון${S.report?.name ? ` · ${esc(S.report.name)}` : ""}</h3>`;
+  h += !S.report ? `<p class="empty">טוען…</p>` : S.report.text ? `<div class="md">${md(S.report.text)}</div>` : `<p class="empty">אין דוחות עדיין.</p>`;
+  return h;
+}
+function md(t){
+  const out = []; let list = null, table = null;
+  const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`(.+?)`/g,"<code>$1</code>");
+  const flush = () => { if (list){ out.push(`<${list.t}>${list.items.map(i=>`<li>${inl(i)}</li>`).join("")}</${list.t}>`); list=null }
+    if (table){ out.push(`<table>${table.map((r,i)=>`<tr>${r.map(c=>i?`<td>${inl(c)}</td>`:`<th>${inl(c)}</th>`).join("")}</tr>`).join("")}</table>`); table=null } };
+  for (const raw of t.split("\n")){
+    const l = raw.trimEnd();
+    if (/^\|/.test(l)){ if (/^\|[\s:|-]+\|$/.test(l)) continue; if (list) flush(); (table ||= []).push(l.replace(/^\||\|$/g,"").split("|").map(s=>s.trim())); continue }
+    if (table) flush();
+    let m;
+    if ((m = l.match(/^(#{1,3})\s+(.*)/))){ flush(); out.push(`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`); continue }
+    if ((m = l.match(/^\s*[-*]\s+(.*)/))){ if (list?.t!=="ul"){ flush(); list={t:"ul",items:[]} } list.items.push(m[1]); continue }
+    if ((m = l.match(/^\s*\d+\.\s+(.*)/))){ if (list?.t!=="ol"){ flush(); list={t:"ol",items:[]} } list.items.push(m[1]); continue }
+    flush(); if (l.trim()) out.push(`<p>${inl(l)}</p>`);
+  }
+  flush(); return out.join("");
+}
+
+/* ---------- send approvals ---------- */
+function updateSend(){
+  const ok = Object.values(marks).filter(v=>v==="ok").length, no = Object.values(marks).filter(v=>v==="no").length, ed = Object.keys(edits).length;
+  const parts = []; if (ok) parts.push(`${ok} לאישור`); if (no) parts.push(`${no} לדחייה`); if (ed) parts.push(`${ed} עריכות`);
+  $("#sendText").textContent = parts.join(", ");
+  $("#send").hidden = !parts.length;
+}
+async function send(){
+  const btn = $("#sendBtn"); btn.disabled = true; btn.textContent = "שולח…";
+  try{
+    const iss = await openIssue();
+    if (!iss) throw new Error("לא נמצאה משימת אישור פתוחה");
+    for (const [id, text] of Object.entries(edits))
+      await gh(`/issues/${iss.number}/comments`, {method:"POST", body: JSON.stringify({body:`edit ${id}:\n${text}`})});
+    const no = Object.keys(marks).filter(k => marks[k]==="no");
+    if (no.length) await gh(`/issues/${iss.number}/comments`, {method:"POST", body: JSON.stringify({body:`reject ${no.join(" ")}`})});
+    const ok = Object.keys(marks).filter(k => marks[k]==="ok" && !edits[k]);
+    if (ok.length){
+      let body = iss.body || "";
+      for (const id of ok) body = body.replace(`- [ ] [${id}]`, `- [x] [${id}]`);
+      await gh(`/issues/${iss.number}`, {method:"PATCH", body: JSON.stringify({body})});
+    }
+    const msg = [ok.length && `${ok.length} אושרו`, no.length && `${no.length} נדחו`, Object.keys(edits).length && `${Object.keys(edits).length} נערכו וחוזרים לאישור`].filter(Boolean).join(", ");
+    for (const k in marks) delete marks[k]; for (const k in edits) delete edits[k];
+    toast(msg + ". המערכת מעדכנת תוך כדקה.");
+    render(); setTimeout(reload, 75000);
+  }catch(e){ toast(e.message) }
+  btn.disabled = false; btn.textContent = "שליחה";
+}
+
+/* ---------- profile save / pause ---------- */
+async function saveProfile(){
+  const P = S.prof[S.client]; const o = structuredClone(P.obj);
+  const v = id => $("#"+id).value.trim(), arr = id => v(id).split("\n").map(s=>s.trim()).filter(Boolean);
+  o.profession = v("e_prof"); o.topics = arr("e_topics"); o.keywords = v("e_kw").split(",").map(s=>s.trim()).filter(Boolean);
+  o.style = v("e_style"); o.personal = arr("e_personal"); o.personal_rules = v("e_prules"); o.off_limits = arr("e_off");
+  await commitProfile(o, `${o.name}: profile edited in the app`);
+  S.editing = false; render(); toast("הפרופיל נשמר. הוא ישמש מהמחזור הבא.");
+}
+async function commitProfile(o, message){
+  const P = S.prof[S.client];
+  const text = jsyaml.dump(o, {lineWidth:110, noRefs:true, quotingType:'"'});
+  const r = await gh(`/contents/config/clients/${S.client}.yaml`, {method:"PUT", body: JSON.stringify({message, content: b64(text), sha: P.sha, branch:"main"})});
+  S.prof[S.client] = {sha: r.content.sha, raw: text, obj: o};
+}
+async function togglePause(){
+  const o = structuredClone(S.prof[S.client].obj); o.status ||= {};
+  if (o.status.paused) delete o.status.paused; else o.status.paused = true;
+  await commitProfile(o, `${o.name}: ${o.status.paused ? "paused" : "resumed"} in the app`);
+  const c = cur(); if (c){ c.paused = !!o.status.paused; c.voice_approved = !!o.status.voice_approved_by_client && !o.status.paused }
+  S.confirm = null; render(); toast(o.status.paused ? "הלקוח הושהה" : "הפעילות חודשה");
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const d = t.dataset;
+  if (d.view) return go(d.view);
+  if (d.open){ S.client = d.c; store.set("client", S.client); return go(d.open) }
+  if (d.client){ S.client = d.client; store.set("client", S.client); S.editing = false; S.confirm = null; render(); if (S.view==="clients") ensureProfile(); return }
+  if (d.csec){ S.csec = d.csec; S.editing = false; render(); return }
+  if (d.ok){ marks[d.ok] === "ok" ? delete marks[d.ok] : marks[d.ok] = "ok"; render(); return }
+  if (d.no){ marks[d.no] === "no" ? delete marks[d.no] : marks[d.no] = "no"; render(); return }
+  if (d.edit){
+    const card = t.closest(".item"), id = d.edit, it = [...cur().posts, ...cur().replies].find(i => i.id === id);
+    if (card.querySelector("textarea")) return;
+    const ta = document.createElement("textarea"); ta.className = "en"; ta.value = edits[id] ?? it.text; ta.setAttribute("aria-label","עריכת הטקסט");
+    const save = document.createElement("button"); save.className = "btn primary"; save.textContent = "שמירת העריכה";
+    save.onclick = () => { const v = ta.value.trim(); if (v && v !== it.text) edits[id] = v; else delete edits[id]; delete marks[id]; render() };
+    card.querySelector(".actions").before(ta); card.querySelector(".actions").prepend(save); ta.focus(); return;
+  }
+  if (d.copy){
+    const c = clients().find(x => x.id === d.c), it = [...c.posts, ...c.replies, ...c.visuals].find(i => i.id === d.copy);
+    try{ await navigator.clipboard.writeText(it.text); toast("הועתק") }catch(err){ toast("ההעתקה לא הצליחה – סמני את הטקסט ידנית") }
+    return;
+  }
+  if (d.posted){ const k = "m:"+d.posted; posted(d.posted) ? store.del(k) : store.set(k,"1"); render(); return }
+  if (d.follow){ const k = "f:"+d.follow; store.get(k,"")==="1" ? store.del(k) : store.set(k,"1"); render(); return }
+  if (d.ask){ S.confirm = d.ask; render(); return }
+  if (d.run){
+    const inputs = {mode: d.run}; if (d.run === "plan90") inputs.client = $("#pc_plan90").value;
+    t.disabled = true;
+    try{ await gh("/actions/workflows/main.yml/dispatches", {method:"POST", body: JSON.stringify({ref:"main", inputs})});
+      S.confirm = null; toast(`${MODES[d.run]} הופעל. זה לוקח כמה דקות.`); render(); setTimeout(refreshRuns, 4000) }
+    catch(err){ toast(err.message); t.disabled = false }
+    return;
+  }
+  const a = d.act;
+  if (a === "settings") return openSettings();
+  if (a === "hideInstall"){ store.set("hideInstall","1"); render(); return }
+  if (a === "allOk"){ pending(cur()).forEach(i => marks[i.id] = "ok"); render(); return }
+  if (a === "clearMarks"){ for (const k in marks) delete marks[k]; render(); return }
+  if (a === "editProfile"){ S.editing = true; render(); return }
+  if (a === "cancelEdit"){ S.editing = false; render(); return }
+  if (a === "reloadProfile"){ ensureProfile(true); return }
+  if (a === "togglePause"){ S.confirm = "pause"; render(); return }
+  if (a === "cancelConfirm"){ S.confirm = null; render(); return }
+  if (a === "refreshRuns"){ S.report = null; refreshRuns(); return }
+  if (a === "saveProfile" || a === "doPause"){
+    t.disabled = true;
+    try{ a === "saveProfile" ? await saveProfile() : await togglePause() }
+    catch(err){ toast(err.message); t.disabled = false; if (/השתנה/.test(err.message)) ensureProfile(true) }
+    return;
+  }
+});
+$("#sendBtn").onclick = send;
+function openSettings(){ $("#repo").value = cfg().repo; $("#token").value = cfg().token; $("#settings").showModal() }
+$("#gear").onclick = openSettings; $("#gear2").onclick = openSettings;
+$("#settings").addEventListener("close", () => {
+  const rv = $("#settings").returnValue;
+  if (rv === "save"){ store.set("repo", $("#repo").value.trim()); store.set("token", $("#token").value.trim()); S.prof = {}; S.runs = null; S.report = null; reload() }
+  if (rv === "logout"){ store.del("token"); S.data = null; render() }
+});
+window.addEventListener("hashchange", () => { const v = location.hash.slice(1); if (VIEWS.some(x=>x[0]===v) && v !== S.view) go(v) });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.data && Date.now() - (reload.at||0) > 120000) reload() });
+
+async function reload(){
+  reload.at = Date.now();
+  if (!cfg().repo || !cfg().token){ render(); return }
+  try{ await loadDashboard(); render(); if (S.view==="clients") ensureProfile(); if (S.view==="runs") refreshRuns() }
+  catch(e){ $("#main").innerHTML = `<p class="empty">${esc(e.message)}.</p><button class="btn primary" data-act="settings">פתיחת ההגדרות</button>`; renderNav() }
+}
+if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+render(); reload();
+</script>
+</body>
+</html>
