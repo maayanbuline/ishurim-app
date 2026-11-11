@@ -1,5 +1,5 @@
 // אישורים ס – שומר רק את קובצי האפליקציה. נתוני GitHub לא נשמרים במטמון, תמיד מהרשת.
-const V = "ishurim-app-v3";
+const V = "ishurim-app-v4";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())) });
